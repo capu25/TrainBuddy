@@ -5,9 +5,9 @@ import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 // --- IMPORT COMPONENTS ---
-import WorkoutWidget from "../../components/WorkoutWidget";
-import AddWorkoutModal from "../../components/AddWorkoutModal";
-import DeleteWorkoutModal from "../../components/DeleteWorkoutModal";
+import WorkoutWidget from "../../components/widget/WorkoutWidget";
+import AddWorkoutModal from "../../components/modals/AddWorkoutModal";
+import DeleteWorkoutModal from "../../components/modals/DeleteWorkoutModal";
 
 // --- IMPORT CONTEXT HOOK ---
 import { useWorkout } from "../../context/ExerciseContext";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -9,32 +9,31 @@ import {
   Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useWorkout } from "../context/ExerciseContext";
 
-interface AddWorkoutModalProps {
+type Exercise = {
+  name: string;
+  description: string;
+  rec: number;
+};
+
+type Props = {
   visible: boolean;
   onClose: () => void;
-}
+  onSubmit: (exercise: Exercise) => void;
+  exercise: Exercise;
+  setExercise: (exercise: Exercise) => void;
+};
 
-const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
+const AddExerciseModal: React.FC<Props> = ({
   visible,
   onClose,
+  onSubmit,
+  exercise,
+  setExercise,
 }) => {
-  const { addWorkout } = useWorkout();
-  const [workoutData, setWorkoutData] = useState({
-    number: "",
-    label: "",
-    subtitle: "",
-  });
-
   const handleSubmit = () => {
-    if (workoutData.label.trim() && workoutData.number.trim()) {
-      addWorkout({
-        id: Date.now().toString(), // Simple ID generation
-        ...workoutData,
-      });
-      onClose();
-      setWorkoutData({ number: "", label: "", subtitle: "" }); // Reset form
+    if (exercise.name.trim() && exercise.description.trim() && exercise.rec) {
+      onSubmit(exercise);
     }
   };
 
@@ -49,7 +48,7 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             {/* Header */}
             <View className="flex-row justify-between items-center mb-8">
               <Text className="text-2xl font-bold text-white">
-                Aggiungi allenamento!
+                Aggiungi esercizio!
               </Text>
               <TouchableOpacity onPress={onClose}>
                 <Icon name="close-outline" color="white" size={28} />
@@ -59,40 +58,41 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             {/* Form */}
             <View className="space-y-4">
               <View>
-                <Text className="text-zinc-400 mb-2">Numero Esercizi</Text>
+                <Text className="text-zinc-400 mb-2">Nome Esercizio</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci numero esercizi"
+                  placeholder="Inserisci nome esercizio"
                   placeholderTextColor="#666"
-                  value={workoutData.number}
+                  value={exercise.name}
                   onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, number: text }))
+                    setExercise({ ...exercise, name: text })
                   }
                 />
               </View>
 
               <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Distretti muscolari</Text>
+                <Text className="text-zinc-400 mb-2">Descrizione</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="(es. Petto + Tricipiti)"
+                  placeholder="Inserisci descrizione"
                   placeholderTextColor="#666"
-                  value={workoutData.label}
+                  value={exercise.description}
+                  multiline
                   onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, label: text }))
+                    setExercise({ ...exercise, description: text })
                   }
                 />
               </View>
 
               <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Giorno</Text>
+                <Text className="text-zinc-400 mb-2">Recupero</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Enter Giorno (es. Lunedì)"
+                  placeholder="Inserisci tempo di recupero"
                   placeholderTextColor="#666"
-                  value={workoutData.subtitle}
+                  value={exercise.rec.toString()}
                   onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, subtitle: text }))
+                    setExercise({ ...exercise, rec: parseFloat(text) || 0 })
                   }
                 />
               </View>
@@ -113,4 +113,4 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
   );
 };
 
-export default AddWorkoutModal;
+export default AddExerciseModal;

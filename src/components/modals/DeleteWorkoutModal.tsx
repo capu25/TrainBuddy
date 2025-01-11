@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useWorkout } from "../context/ExerciseContext";
+import { useWorkout } from "../../context/ExerciseContext";
 
 interface DeleteWorkoutModalProps {
   visible: boolean;

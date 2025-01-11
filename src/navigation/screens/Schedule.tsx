@@ -3,8 +3,8 @@ import React from "react";
 
 const Schedule = () => {
   return (
-    <View>
-      <Text>Schedule</Text>
+    <View className="flex-1 items-center justify-center bg-black">
+      <Text className="text-5xl text-zinc-600">Coming soon!</Text>
     </View>
   );
 };
