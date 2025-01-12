@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   View,
@@ -13,23 +13,37 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 // --- TYPE DEF ---
-interface SetModalProps {
+interface ModSetModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (weight: number, reps: number) => void;
+  currentWeight: number;
+  currentReps: number;
 }
 
-const SetModal: React.FC<SetModalProps> = ({ visible, onClose, onSave }) => {
+const ModSetModal: React.FC<ModSetModalProps> = ({
+  visible,
+  onClose,
+  onSave,
+  currentWeight,
+  currentReps,
+}) => {
   const [weight, setWeight] = useState("");
   const [reps, setReps] = useState("");
+
+  // Populate fields with current values when modal opens
+  useEffect(() => {
+    if (visible) {
+      setWeight(currentWeight.toString());
+      setReps(currentReps.toString());
+    }
+  }, [visible, currentWeight, currentReps]);
 
   const handleSave = () => {
     const weightNum = parseFloat(weight);
     const repsNum = parseInt(reps);
     if (!isNaN(weightNum) && !isNaN(repsNum)) {
       onSave(weightNum, repsNum);
-      setWeight("");
-      setReps("");
       onClose();
     }
   };
@@ -43,7 +57,9 @@ const SetModal: React.FC<SetModalProps> = ({ visible, onClose, onSave }) => {
         <View className="flex-1 justify-end bg-black/50">
           <View className="bg-zinc-800 p-4 rounded-t-3xl">
             <View className="flex-row justify-between items-center mb-6">
-              <Text className="text-white text-2xl font-bold">Nuova Serie</Text>
+              <Text className="text-white text-2xl font-bold">
+                Modifica Serie
+              </Text>
               <TouchableOpacity onPress={onClose}>
                 <Icon name="close-outline" color="white" size={24} />
               </TouchableOpacity>
@@ -77,10 +93,10 @@ const SetModal: React.FC<SetModalProps> = ({ visible, onClose, onSave }) => {
 
             <TouchableOpacity
               onPress={handleSave}
-              className="bg-zinc-700 p-4 rounded-xl mb-6 mt-2"
+              className="bg-zinc-700 p-4 rounded-xl mb-6"
             >
               <Text className="text-white text-center font-semibold text-lg">
-                Salva Serie
+                Salva Modifiche
               </Text>
             </TouchableOpacity>
           </View>
@@ -90,4 +106,4 @@ const SetModal: React.FC<SetModalProps> = ({ visible, onClose, onSave }) => {
   );
 };
 
-export default SetModal;
+export default ModSetModal;

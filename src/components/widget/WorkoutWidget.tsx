@@ -10,14 +10,12 @@ import {
 import Icon from "react-native-vector-icons/Ionicons";
 
 interface WorkoutWidgetProps extends TouchableOpacityProps {
-  number: number | string;
   label: string;
   subtitle?: string;
   onSettingsPress?: () => void;
 }
 
 const WorkoutWidget: React.FC<WorkoutWidgetProps> = ({
-  number,
   label,
   subtitle,
   onSettingsPress,

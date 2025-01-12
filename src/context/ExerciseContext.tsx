@@ -33,13 +33,11 @@ export const ExerciseProvider: React.FC<ExerciseProviderProps> = ({
   const [workouts, setWorkouts] = useState<Workout[]>([
     {
       id: "1",
-      number: "7",
       label: "Petto + Tricipiti",
       subtitle: "Lunedì",
     },
     {
       id: "2",
-      number: "5",
       label: "Schiena + Bicipiti",
       subtitle: "Martedì",
     },
@@ -47,7 +45,7 @@ export const ExerciseProvider: React.FC<ExerciseProviderProps> = ({
   ]);
   const handleWorkoutPress = (workout: Workout) => {
     // Implementa la logica per gestire il click sul workout
-    console.log("Workout pressed:", workout);
+    //console.log("Workout pressed:", workout);
     navigation.navigate("Exploded", {
       workout: workout,
     });

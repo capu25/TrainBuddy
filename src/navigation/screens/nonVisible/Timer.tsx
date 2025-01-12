@@ -75,17 +75,17 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
             left: 0,
             right: 0,
             height: animatedHeight,
-            backgroundColor: "#52525b",
+            backgroundColor: "#22c55e",
             opacity: 1,
           }}
         />
 
         {/* Timer display */}
         {timeLeft > 0 ? (
-          <Text className="text-8xl font-bold text-zinc-400">{timeLeft}s</Text>
+          <Text className="text-8xl font-bold text-white">{timeLeft}s</Text>
         ) : (
           <>
-            <Text className="text-5xl font-semibold text-zinc-400">
+            <Text className="text-5xl font-semibold text-zinc-950">
               Tempo scaduto!
             </Text>
 

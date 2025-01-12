@@ -85,11 +85,13 @@ const AddExerciseModal: React.FC<Props> = ({
               </View>
 
               <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Recupero</Text>
+                <Text className="text-zinc-400 mb-2">Recupero (in SEC)</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
                   placeholder="Inserisci tempo di recupero"
                   placeholderTextColor="#666"
+                  keyboardType="numeric"
+                  returnKeyType="done"
                   value={exercise.rec.toString()}
                   onChangeText={(text) =>
                     setExercise({ ...exercise, rec: parseFloat(text) || 0 })

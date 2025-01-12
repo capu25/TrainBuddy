@@ -70,16 +70,25 @@ const ExplodedExercise: React.FC<Props> = ({ route }) => {
         Esercizi: {exercises.length}
       </Text>
 
-      <ScrollView>
-        {exercises.map((exercise, index) => (
-          <ExerciseWidget
-            key={index}
-            name={exercise.name}
-            description={exercise.description}
-            rec={exercise.rec}
-          />
-        ))}
-      </ScrollView>
+      {exercises && exercises.length > 0 ? (
+        <ScrollView>
+          {exercises.map((exercise, index) => (
+            <ExerciseWidget
+              key={index}
+              name={exercise.name}
+              description={exercise.description}
+              rec={exercise.rec}
+            />
+          ))}
+        </ScrollView>
+      ) : (
+        <View className="w-[100%] h-[80%] top-[5%] items-center  justify-center ">
+          <Text className="text-3xl font-extralight text-slate-200 bottom-[20%] text-center px-4">
+            Ottimo! 🎯 Ora aggiungi i tuoi esercizi e inizia a tracciare i tuoi
+            progressi
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

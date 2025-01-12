@@ -42,22 +42,31 @@ const Home = () => {
         </TouchableOpacity>
       </View>
       {/* --- MAIN WIDGET CONTAINER --- */}
-      <View className="w-[100%] h-[80%] top-[5%] items-center">
-        <ScrollView className="w-[100%]">
-          <View className="flex-row flex-wrap justify-between  px-4 items-center">
-            {workouts.map((workout) => (
-              <WorkoutWidget
-                key={workout.id}
-                number={workout.number}
-                label={workout.label}
-                subtitle={workout.subtitle}
-                onPress={() => handleWorkoutPress(workout)}
-                onSettingsPress={() => handleSettingsPress(workout)}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
+      {workouts && workouts.length > 0 ? (
+        <View className="w-[100%] h-[80%] top-[5%] items-center">
+          <ScrollView className="w-[100%]">
+            <View className="flex-row flex-wrap justify-between  px-4 items-center">
+              {workouts.map((workout) => (
+                <WorkoutWidget
+                  key={workout.id}
+                  label={workout.label}
+                  subtitle={workout.subtitle}
+                  onPress={() => handleWorkoutPress(workout)}
+                  onSettingsPress={() => handleSettingsPress(workout)}
+                />
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+      ) : (
+        <View className="w-[100%] h-[80%] top-[5%] items-center  justify-center ">
+          <Text className="text-3xl font-extralight text-slate-200 bottom-[5%]">
+            Pronto ad iniziare il tuo percorso fitness? Tocca il + per creare il
+            tuo primo allenamento! 💪
+          </Text>
+        </View>
+      )}
+
       {/* --- ADD EXERCISE MODAL --- */}
       <AddWorkoutModal
         visible={isModalVisible}

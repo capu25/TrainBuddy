@@ -22,19 +22,18 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
 }) => {
   const { addWorkout } = useWorkout();
   const [workoutData, setWorkoutData] = useState({
-    number: "",
     label: "",
     subtitle: "",
   });
 
   const handleSubmit = () => {
-    if (workoutData.label.trim() && workoutData.number.trim()) {
+    if (workoutData.label.trim()) {
       addWorkout({
-        id: Date.now().toString(), // Simple ID generation
+        id: Date.now().toString(),
         ...workoutData,
       });
       onClose();
-      setWorkoutData({ number: "", label: "", subtitle: "" }); // Reset form
+      setWorkoutData({ label: "", subtitle: "" }); // Reset form
     }
   };
 
@@ -59,19 +58,6 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             {/* Form */}
             <View className="space-y-4">
               <View>
-                <Text className="text-zinc-400 mb-2">Numero Esercizi</Text>
-                <TextInput
-                  className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci numero esercizi"
-                  placeholderTextColor="#666"
-                  value={workoutData.number}
-                  onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, number: text }))
-                  }
-                />
-              </View>
-
-              <View className="mt-4">
                 <Text className="text-zinc-400 mb-2">Distretti muscolari</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
@@ -88,7 +74,7 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
                 <Text className="text-zinc-400 mb-2">Giorno</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Enter Giorno (es. Lunedì)"
+                  placeholder="Inserisci Giorno (es. Lunedì)"
                   placeholderTextColor="#666"
                   value={workoutData.subtitle}
                   onChangeText={(text) =>

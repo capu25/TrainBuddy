@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 // --- IMPORT COMPONENTS ---
 import SetModal from "../modals/SetModal";
+import ModSetModal from "../modals/ModSetModal";
 
 // --- NAV STUFF ---
 import { useNavigation } from "@react-navigation/native";
@@ -34,12 +35,14 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
 }) => {
   // --- NAVIGATOR ---
   const navigation = useNavigation<NavigationProp>();
-  const [sets, setSets] = useState<Set[]>([
-    //{ id: "1", reps: 12, weight: 20, completed: false },
-    //{ id: "2", reps: 10, weight: 22.5, completed: false },
-    //{ id: "3", reps: 8, weight: 25, completed: false },
-  ]);
+  const [sets, setSets] = useState<Set[]>([]);
+
+  // --- ADD SET MODAL ---
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // --- MODIFY SET MODAL ---
+  const [isModModalVisible, setIsModModalVisible] = useState(false);
+  const [selectedSet, setSelectedSet] = useState<Set | null>(null);
 
   const toggleSetCompletion = (id: string) => {
     setSets(
@@ -57,6 +60,21 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
       completed: false,
     };
     setSets([...sets, newSet]);
+  };
+
+  const handleSetModification = (weight: number, reps: number) => {
+    if (selectedSet) {
+      setSets(
+        sets.map((set) =>
+          set.id === selectedSet.id ? { ...set, weight, reps } : set
+        )
+      );
+    }
+  };
+
+  const handleLongPress = (set: Set) => {
+    setSelectedSet(set);
+    setIsModModalVisible(true);
   };
 
   return (
@@ -103,6 +121,7 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
             {sets.map((set) => (
               <TouchableOpacity
                 key={set.id}
+                onLongPress={() => handleLongPress(set)}
                 onPress={() => toggleSetCompletion(set.id)}
                 className={`border ${
                   set.completed
@@ -124,6 +143,17 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
         onSave={addSet}
+      />
+
+      <ModSetModal
+        visible={isModModalVisible}
+        onClose={() => {
+          setIsModModalVisible(false);
+          setSelectedSet(null);
+        }}
+        onSave={handleSetModification}
+        currentWeight={selectedSet?.weight || 0}
+        currentReps={selectedSet?.reps || 0}
       />
     </View>
   );
