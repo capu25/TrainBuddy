@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   TouchableOpacityProps,
 } from "react-native";
+
+// --- IMPORT ICONS ---
 import Icon from "react-native-vector-icons/Ionicons";
 
 interface WorkoutWidgetProps extends TouchableOpacityProps {
@@ -30,10 +32,8 @@ const WorkoutWidget: React.FC<WorkoutWidgetProps> = ({
     <View className="flex-row justify-between items-start">
       <View className="flex-col">
         <View className="flex-row items-baseline gap-1">
-          <View className="bg-zinc-700 rounded-full justify-center items-center px-4 py-2">
-            <Text className="text-3xl font-semibold text-white p-1">
-              {number}
-            </Text>
+          <View className="bg-zinc-700 rounded-full justify-center items-center px-2 py-2">
+            <Icon name="analytics-outline" color={"#fff"} size={35} />
           </View>
         </View>
         <Text className="mt-2 text-lg text-gray-400">{label}</Text>

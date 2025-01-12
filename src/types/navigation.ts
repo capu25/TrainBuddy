@@ -6,6 +6,9 @@ export type RootStackParamList = {
   Exploded: {
     workout: Workout;
   };
+  Timer: {
+    time: number;
+  };
 };
 
 export type MainTabParamList = {

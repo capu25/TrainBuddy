@@ -26,7 +26,7 @@ const ExplodedExercise: React.FC<Props> = ({ route }) => {
     {
       name: "Spinte Manubri",
       description: "panca piana, piramidale. All'ultima 50% e max rep",
-      rec: 1.3,
+      rec: 10,
     },
   ]);
   const [newExercise, setNewExercise] = useState<Exercise>({

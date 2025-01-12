@@ -7,6 +7,12 @@ import Icon from "react-native-vector-icons/Ionicons";
 // --- IMPORT COMPONENTS ---
 import SetModal from "../modals/SetModal";
 
+// --- NAV STUFF ---
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/navigation";
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 // --- TYPE DEF ---
 interface ExerciseDetails {
   name: string;
@@ -26,10 +32,12 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
   description,
   rec,
 }) => {
+  // --- NAVIGATOR ---
+  const navigation = useNavigation<NavigationProp>();
   const [sets, setSets] = useState<Set[]>([
-    { id: "1", reps: 12, weight: 20, completed: false },
-    { id: "2", reps: 10, weight: 22.5, completed: false },
-    { id: "3", reps: 8, weight: 25, completed: false },
+    //{ id: "1", reps: 12, weight: 20, completed: false },
+    //{ id: "2", reps: 10, weight: 22.5, completed: false },
+    //{ id: "3", reps: 8, weight: 25, completed: false },
   ]);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -68,10 +76,13 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
         </View>
 
         {/* --- WIDGET REC BANNER ---*/}
-        <View className="border border-zinc-400 rounded-lg px-3 py-1.5 flex-row items-center ml-2">
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Timer", { time: rec })}
+          className="border border-zinc-400 rounded-lg px-3 py-1.5 flex-row items-center ml-2"
+        >
           <Icon name="timer-outline" color="white" size={22} />
           <Text className="text-white ml-1">{rec}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
 
       {/* --- SETS SECTION --- */}
