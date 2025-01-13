@@ -1,24 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-
-// --- IMPORT ICONS ---
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
-
-// --- IMPORT COMPONENTS ---
 import SetModal from "../modals/SetModal";
 import ModSetModal from "../modals/ModSetModal";
-
-// --- NAV STUFF ---
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigation";
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// --- TYPE DEF ---
 interface ExerciseDetails {
   name: string;
   description: string;
   rec: number;
+  onDelete?: () => void;
 }
 
 interface Set {
@@ -33,42 +29,71 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
   description,
   rec,
 }) => {
-  // --- NAVIGATOR ---
   const navigation = useNavigation<NavigationProp>();
   const [sets, setSets] = useState<Set[]>([]);
-
-  // --- ADD SET MODAL ---
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  // --- MODIFY SET MODAL ---
   const [isModModalVisible, setIsModModalVisible] = useState(false);
   const [selectedSet, setSelectedSet] = useState<Set | null>(null);
 
-  const toggleSetCompletion = (id: string) => {
-    setSets(
-      sets.map((set) =>
-        set.id === id ? { ...set, completed: !set.completed } : set
-      )
-    );
+  // Chiave unica per ogni esercizio
+  const storageKey = `exercise_sets_${name.toLowerCase().replace(/\s+/g, "_")}`;
+
+  // Carica le serie salvate all'avvio del componente
+  useEffect(() => {
+    loadSets();
+  }, []);
+
+  // Carica le serie da AsyncStorage
+  const loadSets = async () => {
+    try {
+      const savedSets = await AsyncStorage.getItem(storageKey);
+      if (savedSets) {
+        setSets(JSON.parse(savedSets));
+      }
+    } catch (error) {
+      console.error("Errore nel caricamento delle serie:", error);
+    }
   };
 
-  const addSet = (weight: number, reps: number) => {
+  // Salva le serie in AsyncStorage
+  const saveSets = async (newSets: Set[]) => {
+    try {
+      await AsyncStorage.setItem(storageKey, JSON.stringify(newSets));
+    } catch (error) {
+      console.error("Errore nel salvataggio delle serie:", error);
+    }
+  };
+
+  // Gestisce il toggle del completamento
+  const toggleSetCompletion = async (id: string) => {
+    const updatedSets = sets.map((set) =>
+      set.id === id ? { ...set, completed: !set.completed } : set
+    );
+    setSets(updatedSets);
+    await saveSets(updatedSets);
+  };
+
+  // Aggiunge una nuova serie
+  const addSet = async (weight: number, reps: number) => {
     const newSet: Set = {
       id: (sets.length + 1).toString(),
       reps,
       weight,
       completed: false,
     };
-    setSets([...sets, newSet]);
+    const updatedSets = [...sets, newSet];
+    setSets(updatedSets);
+    await saveSets(updatedSets);
   };
 
-  const handleSetModification = (weight: number, reps: number) => {
+  // Modifica una serie esistente
+  const handleSetModification = async (weight: number, reps: number) => {
     if (selectedSet) {
-      setSets(
-        sets.map((set) =>
-          set.id === selectedSet.id ? { ...set, weight, reps } : set
-        )
+      const updatedSets = sets.map((set) =>
+        set.id === selectedSet.id ? { ...set, weight, reps } : set
       );
+      setSets(updatedSets);
+      await saveSets(updatedSets);
     }
   };
 
@@ -77,9 +102,19 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
     setIsModModalVisible(true);
   };
 
+  const handleDeleteSet = async () => {
+    if (selectedSet) {
+      const updatedSets = sets.filter((set) => set.id !== selectedSet.id);
+      setSets(updatedSets);
+      await saveSets(updatedSets);
+      setIsModModalVisible(false);
+      setSelectedSet(null);
+    }
+  };
+
   return (
     <View className="rounded-lg border border-zinc-800 p-3 mt-8">
-      {/* --- WIDGET HEADER ---*/}
+      {/* Header rimane uguale */}
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
           <View className="w-14 h-14 border-2 rounded-lg justify-center items-center bg-zinc-800">
@@ -93,7 +128,6 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
           </View>
         </View>
 
-        {/* --- WIDGET REC BANNER ---*/}
         <TouchableOpacity
           onPress={() => navigation.navigate("Timer", { time: rec })}
           className="border border-zinc-400 rounded-lg px-3 py-1.5 flex-row items-center ml-2"
@@ -103,7 +137,7 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
         </TouchableOpacity>
       </View>
 
-      {/* --- SETS SECTION --- */}
+      {/* Sezione serie */}
       <View className="mt-4 border-t border-zinc-800 pt-3">
         <View className="flex-row justify-between items-center mb-2">
           <Text className="text-zinc-400">Serie completate</Text>
@@ -152,6 +186,7 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
           setSelectedSet(null);
         }}
         onSave={handleSetModification}
+        onDelete={handleDeleteSet}
         currentWeight={selectedSet?.weight || 0}
         currentReps={selectedSet?.reps || 0}
       />

@@ -1,5 +1,8 @@
 import React from "react";
 
+// --- IMPORT ONBOARDING ---
+import OnBoarding from "../components/OnBoarding";
+
 // --- IMPORT MAIN TAB NAV ---
 import MainTabNav from "../components/MainTabNav";
 
@@ -18,10 +21,16 @@ import { ExerciseProvider } from "../context/ExerciseContext";
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const MainStack = () => {
+  const isFirstAccess: Boolean = false;
   return (
     <NavigationContainer>
       <ExerciseProvider>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Navigator
+          initialRouteName={isFirstAccess ? "Onboarding" : "MainNav"}
+          screenOptions={{ headerShown: false }}
+        >
+          {/* --- FIRST ACCESS --- */}
+          <Stack.Screen name="Onboarding" component={OnBoarding} />
           {/* --- MAIN TAB NAV --- */}
           <Stack.Screen
             name="MainNav"

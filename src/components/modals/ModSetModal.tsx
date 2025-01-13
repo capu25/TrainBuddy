@@ -17,6 +17,7 @@ interface ModSetModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (weight: number, reps: number) => void;
+  onDelete: () => void;
   currentWeight: number;
   currentReps: number;
 }
@@ -25,6 +26,7 @@ const ModSetModal: React.FC<ModSetModalProps> = ({
   visible,
   onClose,
   onSave,
+  onDelete,
   currentWeight,
   currentReps,
 }) => {
@@ -97,6 +99,14 @@ const ModSetModal: React.FC<ModSetModalProps> = ({
             >
               <Text className="text-white text-center font-semibold text-lg">
                 Salva Modifiche
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={onDelete}
+              className="bg-red-500 p-4 rounded-xl mb-6"
+            >
+              <Text className="text-white text-center font-semibold text-lg">
+                Elimina Serie
               </Text>
             </TouchableOpacity>
           </View>

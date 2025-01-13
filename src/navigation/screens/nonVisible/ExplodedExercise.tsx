@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../../../types/navigation";
-
-// --- IMPORT ICONS ---
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
-
-// --- IMPORT COMPONENTS ---
+import { RootStackParamList } from "../../../types/navigation";
 import ExerciseWidget from "../../../components/widget/ExerciseWidget";
 import AddExerciseModal from "../../../components/modals/AddExerciseModal";
 
-// --- TYPE DEF ---
 type Exercise = {
   name: string;
   description: string;
@@ -22,23 +18,52 @@ type Props = NativeStackScreenProps<RootStackParamList, "Exploded">;
 const ExplodedExercise: React.FC<Props> = ({ route }) => {
   const { workout } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
-  const [exercises, setExercises] = useState<Exercise[]>([
-    {
-      name: "Spinte Manubri",
-      description: "panca piana, piramidale. All'ultima 50% e max rep",
-      rec: 10,
-    },
-  ]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [newExercise, setNewExercise] = useState<Exercise>({
     name: "",
     description: "",
     rec: 0,
   });
 
-  const handleAddExercise = (exercise: Exercise) => {
-    setExercises([...exercises, exercise]);
+  // Generate a unique storage key for each workout
+  const STORAGE_KEY = `@exercises_${workout.id}`;
+
+  // Load exercises when component mounts
+  useEffect(() => {
+    loadExercises();
+  }, []);
+
+  const loadExercises = async () => {
+    try {
+      const storedExercises = await AsyncStorage.getItem(STORAGE_KEY);
+      if (storedExercises) {
+        setExercises(JSON.parse(storedExercises));
+      }
+    } catch (error) {
+      console.error("Error loading exercises:", error);
+    }
+  };
+
+  const saveExercises = async (updatedExercises: Exercise[]) => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedExercises));
+    } catch (error) {
+      console.error("Error saving exercises:", error);
+    }
+  };
+
+  const handleAddExercise = async (exercise: Exercise) => {
+    const updatedExercises = [...exercises, exercise];
+    setExercises(updatedExercises);
+    await saveExercises(updatedExercises);
     setNewExercise({ name: "", description: "", rec: 0 });
     setModalVisible(false);
+  };
+
+  const handleDeleteExercise = async (index: number) => {
+    const updatedExercises = exercises.filter((_, i) => i !== index);
+    setExercises(updatedExercises);
+    await saveExercises(updatedExercises);
   };
 
   return (
@@ -78,11 +103,12 @@ const ExplodedExercise: React.FC<Props> = ({ route }) => {
               name={exercise.name}
               description={exercise.description}
               rec={exercise.rec}
+              onDelete={() => handleDeleteExercise(index)}
             />
           ))}
         </ScrollView>
       ) : (
-        <View className="w-[100%] h-[80%] top-[5%] items-center  justify-center ">
+        <View className="w-[100%] h-[80%] top-[5%] items-center justify-center">
           <Text className="text-3xl font-extralight text-slate-200 bottom-[20%] text-center px-4">
             Ottimo! 🎯 Ora aggiungi i tuoi esercizi e inizia a tracciare i tuoi
             progressi

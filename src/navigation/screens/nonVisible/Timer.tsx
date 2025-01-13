@@ -75,7 +75,7 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
             left: 0,
             right: 0,
             height: animatedHeight,
-            backgroundColor: "#22c55e",
+            backgroundColor: "#10b981",
             opacity: 1,
           }}
         />
