@@ -7,7 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../navigation/screens/Home";
 import Settings from "../navigation/screens/Settings";
 import Stats from "../navigation/screens/Stats";
-import Schedule from "../navigation/screens/Schedule";
+import Achivements from "../navigation/screens/Achivements";
 
 // --- IMPORT ICONS ---
 import Icon from "react-native-vector-icons/Ionicons";
@@ -38,11 +38,11 @@ const MainTabNav = () => {
         }}
       />
       <Tab.Screen
-        name="Schedule"
-        component={Schedule}
+        name="Achivements"
+        component={Achivements}
         options={{
           tabBarIcon: ({ color }) => (
-            <Icon name="calendar-outline" color={color} size={25} />
+            <Icon name="trophy-outline" color={color} size={25} />
           ),
         }}
       />
