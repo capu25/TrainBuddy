@@ -24,6 +24,18 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "84ad9c4b-558c-4528-ab55-227c7b21760a"
+      }
+    },
+    "owner": "ccaapp",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/84ad9c4b-558c-4528-ab55-227c7b21760a"
     }
   }
 }
