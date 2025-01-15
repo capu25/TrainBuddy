@@ -11,6 +11,7 @@ import DeleteWorkoutModal from "../../components/modals/delete/DeleteWorkoutModa
 
 // --- IMPORT CONTEXT HOOK ---
 import { useWorkout } from "../../context/ExerciseContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const { workouts, handleWorkoutPress } = useWorkout();
@@ -33,6 +34,12 @@ const Home = () => {
   const handleModWorkout = (workouts: any) => {
     console.log("edit");
   };
+
+  // --- DEV USE ONLY ---
+  //const handleRESET = async () => {
+  //  await AsyncStorage.removeItem("@first_access");
+  //  console.log("RESET DONE");
+  //};
 
   return (
     <View className="flex-1 justify-center items-center bg-black">
@@ -71,6 +78,13 @@ const Home = () => {
           </Text>
         </View>
       )}
+
+      {/*
+        DEV ONLY
+        <TouchableOpacity onPress={() => handleRESET()}>
+          <Text className="text-white">TEST ME</Text>
+        </TouchableOpacity>
+      /*}
 
       {/* --- ADD EXERCISE MODAL --- */}
       <AddWorkoutModal
