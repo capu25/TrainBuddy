@@ -37,7 +37,11 @@ const WorkoutWidget: React.FC<WorkoutWidgetProps> = ({
         <Text className="mt-2 text-lg text-gray-400">{label}</Text>
         {subtitle && <Text className="text-sm text-gray-500">{subtitle}</Text>}
       </View>
-      <TouchableOpacity onPress={onSettingsPress}>
+      <TouchableOpacity
+        onPress={onSettingsPress}
+        onLongPress={() => null}
+        className="absolute left-[80%]"
+      >
         <Icon name="options-outline" color={"#666666"} size={28} />
       </TouchableOpacity>
     </View>

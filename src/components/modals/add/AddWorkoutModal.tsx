@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,31 +9,40 @@ import {
   Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useWorkout } from "../../../context/ExerciseContext";
 
-type Exercise = {
-  name: string;
-  description: string;
-  rec: number;
-};
+// --- IMPORT TOAST ---
+import Toast from "react-native-toast-message";
 
-type Props = {
+interface AddWorkoutModalProps {
   visible: boolean;
   onClose: () => void;
-  onSubmit: (exercise: Exercise) => void;
-  exercise: Exercise;
-  setExercise: (exercise: Exercise) => void;
-};
+}
 
-const AddExerciseModal: React.FC<Props> = ({
+const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
   visible,
   onClose,
-  onSubmit,
-  exercise,
-  setExercise,
 }) => {
+  const { addWorkout } = useWorkout();
+  const [workoutData, setWorkoutData] = useState({
+    label: "",
+    subtitle: "",
+  });
+
   const handleSubmit = () => {
-    if (exercise.name.trim() && exercise.description.trim() && exercise.rec) {
-      onSubmit(exercise);
+    if (workoutData.label.trim()) {
+      addWorkout({
+        id: Date.now().toString(),
+        ...workoutData,
+      });
+      onClose();
+      setWorkoutData({ label: "", subtitle: "" }); // Reset form
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Attenzione",
+        text2: "Non hai inserito il nome della Route di allenamento!",
+      });
     }
   };
 
@@ -48,7 +57,7 @@ const AddExerciseModal: React.FC<Props> = ({
             {/* Header */}
             <View className="flex-row justify-between items-center mb-8">
               <Text className="text-2xl font-bold text-white">
-                Aggiungi esercizio!
+                Aggiungi allenamento!
               </Text>
               <TouchableOpacity onPress={onClose}>
                 <Icon name="close-outline" color="white" size={28} />
@@ -58,43 +67,29 @@ const AddExerciseModal: React.FC<Props> = ({
             {/* Form */}
             <View className="space-y-4">
               <View>
-                <Text className="text-zinc-400 mb-2">Nome Esercizio</Text>
+                <Text className="text-zinc-400 mb-2">Distretti muscolari</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci nome esercizio"
+                  placeholder="(es. Petto + Tricipiti)"
                   placeholderTextColor="#666"
-                  value={exercise.name}
+                  value={workoutData.label}
+                  maxLength={15}
                   onChangeText={(text) =>
-                    setExercise({ ...exercise, name: text })
+                    setWorkoutData((prev) => ({ ...prev, label: text }))
                   }
                 />
               </View>
 
               <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Descrizione</Text>
+                <Text className="text-zinc-400 mb-2">Giorno</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci descrizione"
+                  placeholder="Inserisci Giorno (es. Lunedì)"
                   placeholderTextColor="#666"
-                  value={exercise.description}
-                  multiline
+                  value={workoutData.subtitle}
+                  maxLength={15}
                   onChangeText={(text) =>
-                    setExercise({ ...exercise, description: text })
-                  }
-                />
-              </View>
-
-              <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Recupero (in SEC)</Text>
-                <TextInput
-                  className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci tempo di recupero"
-                  placeholderTextColor="#666"
-                  keyboardType="numeric"
-                  returnKeyType="done"
-                  value={exercise.rec.toString()}
-                  onChangeText={(text) =>
-                    setExercise({ ...exercise, rec: parseFloat(text) || 0 })
+                    setWorkoutData((prev) => ({ ...prev, subtitle: text }))
                   }
                 />
               </View>
@@ -110,9 +105,11 @@ const AddExerciseModal: React.FC<Props> = ({
             </View>
           </View>
         </View>
+        {/* --- TOAST COMPONENT --- */}
+        <Toast />
       </KeyboardAvoidingView>
     </Modal>
   );
 };
 
-export default AddExerciseModal;
+export default AddWorkoutModal;

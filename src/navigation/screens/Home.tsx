@@ -6,8 +6,8 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 // --- IMPORT COMPONENTS ---
 import WorkoutWidget from "../../components/widget/WorkoutWidget";
-import AddWorkoutModal from "../../components/modals/AddWorkoutModal";
-import DeleteWorkoutModal from "../../components/modals/DeleteWorkoutModal";
+import AddWorkoutModal from "../../components/modals/add/AddWorkoutModal";
+import DeleteWorkoutModal from "../../components/modals/delete/DeleteWorkoutModal";
 
 // --- IMPORT CONTEXT HOOK ---
 import { useWorkout } from "../../context/ExerciseContext";
@@ -28,6 +28,10 @@ const Home = () => {
       visible: true,
       workout: { id: workout.id, label: workout.label },
     });
+  };
+
+  const handleModWorkout = (workouts: any) => {
+    console.log("edit");
   };
 
   return (
@@ -53,6 +57,7 @@ const Home = () => {
                   subtitle={workout.subtitle}
                   onPress={() => handleWorkoutPress(workout)}
                   onSettingsPress={() => handleSettingsPress(workout)}
+                  onLongPress={() => handleModWorkout(workout)}
                 />
               ))}
             </View>

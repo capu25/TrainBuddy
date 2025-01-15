@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RootStackParamList } from "../../../types/navigation";
 import ExerciseWidget from "../../../components/widget/ExerciseWidget";
-import AddExerciseModal from "../../../components/modals/AddExerciseModal";
+import AddExerciseModal from "../../../components/modals/add/AddExerciseModal";
 
 type Exercise = {
   name: string;

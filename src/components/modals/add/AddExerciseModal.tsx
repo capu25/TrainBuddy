@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -8,32 +8,43 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import Icon from "react-native-vector-icons/Ionicons";
-import { useWorkout } from "../../context/ExerciseContext";
 
-interface AddWorkoutModalProps {
+// --- IMPORT ICON ---
+import Icon from "react-native-vector-icons/Ionicons";
+
+// --- IMPORT TOAST ---
+import Toast from "react-native-toast-message";
+
+type Exercise = {
+  name: string;
+  description: string;
+  rec: number;
+};
+
+type Props = {
   visible: boolean;
   onClose: () => void;
-}
+  onSubmit: (exercise: Exercise) => void;
+  exercise: Exercise;
+  setExercise: (exercise: Exercise) => void;
+};
 
-const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
+const AddExerciseModal: React.FC<Props> = ({
   visible,
   onClose,
+  onSubmit,
+  exercise,
+  setExercise,
 }) => {
-  const { addWorkout } = useWorkout();
-  const [workoutData, setWorkoutData] = useState({
-    label: "",
-    subtitle: "",
-  });
-
   const handleSubmit = () => {
-    if (workoutData.label.trim()) {
-      addWorkout({
-        id: Date.now().toString(),
-        ...workoutData,
-      });
-      onClose();
-      setWorkoutData({ label: "", subtitle: "" }); // Reset form
+    {
+      exercise.name.trim()
+        ? onSubmit(exercise)
+        : Toast.show({
+            type: "error",
+            text1: "Attenzione",
+            text2: "Non hai inserito il nome dell'esercizio!",
+          });
     }
   };
 
@@ -48,7 +59,7 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             {/* Header */}
             <View className="flex-row justify-between items-center mb-8">
               <Text className="text-2xl font-bold text-white">
-                Aggiungi allenamento!
+                Aggiungi esercizio!
               </Text>
               <TouchableOpacity onPress={onClose}>
                 <Icon name="close-outline" color="white" size={28} />
@@ -58,27 +69,43 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             {/* Form */}
             <View className="space-y-4">
               <View>
-                <Text className="text-zinc-400 mb-2">Distretti muscolari</Text>
+                <Text className="text-zinc-400 mb-2">Nome Esercizio</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="(es. Petto + Tricipiti)"
+                  placeholder="Inserisci nome esercizio"
                   placeholderTextColor="#666"
-                  value={workoutData.label}
+                  value={exercise.name}
                   onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, label: text }))
+                    setExercise({ ...exercise, name: text })
                   }
                 />
               </View>
 
               <View className="mt-4">
-                <Text className="text-zinc-400 mb-2">Giorno</Text>
+                <Text className="text-zinc-400 mb-2">Descrizione</Text>
                 <TextInput
                   className="bg-zinc-900 text-white p-4 rounded-xl"
-                  placeholder="Inserisci Giorno (es. Lunedì)"
+                  placeholder="Inserisci descrizione"
                   placeholderTextColor="#666"
-                  value={workoutData.subtitle}
+                  value={exercise.description}
+                  multiline
                   onChangeText={(text) =>
-                    setWorkoutData((prev) => ({ ...prev, subtitle: text }))
+                    setExercise({ ...exercise, description: text })
+                  }
+                />
+              </View>
+
+              <View className="mt-4">
+                <Text className="text-zinc-400 mb-2">Recupero (in SEC)</Text>
+                <TextInput
+                  className="bg-zinc-900 text-white p-4 rounded-xl"
+                  placeholder="Inserisci tempo di recupero"
+                  placeholderTextColor="#666"
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  value={exercise.rec.toString()}
+                  onChangeText={(text) =>
+                    setExercise({ ...exercise, rec: parseFloat(text) || 0 })
                   }
                 />
               </View>
@@ -94,9 +121,11 @@ const AddWorkoutModal: React.FC<AddWorkoutModalProps> = ({
             </View>
           </View>
         </View>
+        {/* --- TOAST COMPONENT --- */}
+        <Toast />
       </KeyboardAvoidingView>
     </Modal>
   );
 };
 
-export default AddWorkoutModal;
+export default AddExerciseModal;
