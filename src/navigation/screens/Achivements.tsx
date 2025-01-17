@@ -164,22 +164,28 @@ const Achievements = () => {
 
       {/* PR Tracker Section with Delete and ScrollView */}
 
-      <View className="w-[90%] h-[65%] bg-zinc-900 rounded-xl p-4">
+      <View className="w-[90%] h-[65%] bg-black rounded-xl p-4">
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-2xl font-bold text-zinc-300">PR Tracker</Text>
-          <TouchableOpacity onPress={() => setShowPRInput(true)}>
-            <Icon name="add-circle-outline" color="white" size={32} />
+          <TouchableOpacity
+            onPress={() => setShowPRInput((prevState) => !prevState)}
+          >
+            {showPRInput ? (
+              <Icon name="close-circle-outline" color="white" size={32} />
+            ) : (
+              <Icon name="add-circle-outline" color="white" size={32} />
+            )}
           </TouchableOpacity>
         </View>
 
         {showPRInput && (
-          <View className="mb-8">
+          <View className="mb-5 rounded-lg bg-zinc-800 p-3">
             <TextInput
               value={exercise}
               onChangeText={setExercise}
               placeholder="Nome Esercizio"
               placeholderTextColor="#666"
-              className="bg-zinc-800 text-white p-2 text-base rounded-lg mb-4"
+              className="bg-zinc-900 text-white py-2 px-1 text-base rounded-lg mb-4"
             />
             <View className="flex-row items-center">
               <TextInput
@@ -188,7 +194,7 @@ const Achievements = () => {
                 placeholder="Peso"
                 placeholderTextColor="#666"
                 keyboardType="numeric"
-                className="flex-1 bg-zinc-800 text-white p-2 text-base rounded-lg mr-2"
+                className="flex-1 bg-zinc-900 text-white py-2 px-1 text-base rounded-lg mr-2"
               />
               <TouchableOpacity onPress={addPR}>
                 <Icon name="checkmark-circle" color="white" size={42} />
