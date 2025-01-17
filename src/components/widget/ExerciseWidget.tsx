@@ -7,6 +7,11 @@ import ModSetModal from "../modals/mod/ModSetModal";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigation";
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+
+// --- TESTING ---
+
+// --- TESTING ---
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -114,7 +119,6 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
 
   return (
     <View className="rounded-lg border border-zinc-800 p-3 mt-8">
-      {/* Header rimane uguale */}
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center flex-1">
           <View className="w-14 h-14 border-2 rounded-lg justify-center items-center bg-zinc-800">

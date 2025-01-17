@@ -96,7 +96,7 @@ const ExplodedExercise: React.FC<Props> = ({ route }) => {
       </Text>
 
       {exercises && exercises.length > 0 ? (
-        <ScrollView>
+        <ScrollView className="mb-10">
           {exercises.map((exercise, index) => (
             <ExerciseWidget
               key={index}
