@@ -21,6 +21,8 @@ const Achievements = () => {
   const [exercise, setExercise] = useState<string>("");
   const [prWeight, setPRWeight] = useState<string>("");
   const [currentWeight, setCurrentWeight] = useState<string>("70");
+  const [isEditingWeight, setIsEditingWeight] = useState<boolean>(false);
+  const [tempWeight, setTempWeight] = useState<string>("");
 
   // Carica i dati salvati all'avvio
   useEffect(() => {
@@ -91,13 +93,27 @@ const Achievements = () => {
     saveWeight(weightString);
   };
 
+  const handleSetWeight = () => {
+    setIsEditingWeight(true);
+    setTempWeight(currentWeight);
+  };
+
+  const handleWeightSubmit = () => {
+    if (tempWeight) {
+      const newWeight = parseFloat(tempWeight).toFixed(1);
+      setCurrentWeight(newWeight);
+      saveWeight(newWeight);
+    }
+    setIsEditingWeight(false);
+  };
+
   return (
     <View className="flex-1 justify-start items-center bg-black">
       <View className="w-[90%] flex-row justify-between items-center top-[2%] mb-8 mt-[12%]">
         <Text className="text-5xl font-semibold text-zinc-300">Tracker</Text>
       </View>
 
-      {/* Simplified Weight Tracker Section */}
+      {/* Weight Tracker Section */}
       <View className="w-[90%] bg-zinc-900 rounded-xl p-4 mb-4">
         <View className="items-center">
           <Text className="text-xl font-bold text-zinc-300 mb-4">
@@ -110,11 +126,31 @@ const Achievements = () => {
             >
               <Icon name="remove" color="white" size={24} />
             </TouchableOpacity>
-            <View className="mx-4 items-center">
-              <Text className="text-4xl font-bold text-zinc-300">
-                {currentWeight}
-              </Text>
-              <Text className="text-sm text-zinc-500">kg</Text>
+            <View className="mx-4 items-center w-[40%]">
+              {isEditingWeight ? (
+                <View className="flex-row items-center">
+                  <TextInput
+                    value={tempWeight}
+                    onChangeText={setTempWeight}
+                    keyboardType="numeric"
+                    autoFocus={true}
+                    className="text-4xl font-bold text-zinc-300 text-center w-24"
+                    onSubmitEditing={handleWeightSubmit}
+                    onBlur={handleWeightSubmit}
+                  />
+                  <Text className="text-sm text-zinc-500 ml-1">kg</Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onLongPress={handleSetWeight}
+                  className="items-center"
+                >
+                  <Text className="text-4xl font-bold text-zinc-300">
+                    {currentWeight}
+                  </Text>
+                  <Text className="text-sm text-zinc-500">kg</Text>
+                </TouchableOpacity>
+              )}
             </View>
             <TouchableOpacity
               onPress={() => adjustWeight(true)}
