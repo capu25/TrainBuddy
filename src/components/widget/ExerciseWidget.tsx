@@ -7,11 +7,6 @@ import ModSetModal from "../modals/mod/ModSetModal";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../../types/navigation";
-import { TouchableWithoutFeedback } from "react-native-gesture-handler";
-
-// --- TESTING ---
-
-// --- TESTING ---
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
