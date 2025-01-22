@@ -161,7 +161,9 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
               Ripetizioni SuperSerie
             </Text>
           ) : (
-            <Text className="text-zinc-400 text-base">Serie completate</Text>
+            <Text className="text-zinc-400 text-base top-[35%]">
+              Serie completate
+            </Text>
           )}
           <View className="flex-row gap-0.5 items-center">
             <View>
@@ -175,16 +177,26 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
                 className="flex-row items-center bg-zinc-800 px-3 py-1.5 rounded-lg"
               >
                 <Icon name="add-outline" color="white" size={20} />
-                <Text className="text-white ml-1">Aggiungi serie</Text>
+                {isSecondary ? null : (
+                  <Text className="text-white ml-1">Aggiungi serie</Text>
+                )}
               </TouchableOpacity>
               {!isSecondary && (
                 <View className="flex-row items-center justify-center mt-2">
-                  <Text className="text-zinc-400 text-sm mx-1">SuperSerie</Text>
-                  <TouchableOpacity onPress={toggleSecondaryRow}>
+                  <TouchableOpacity
+                    className="flex-row items-center"
+                    onPress={toggleSecondaryRow}
+                  >
+                    <Text
+                      className="text-base mx-1"
+                      style={{ color: isSecondaryRow ? "#10b981" : "#71717a" }}
+                    >
+                      SuperSerie
+                    </Text>
                     <Icon
                       name="flash-outline"
                       color={isSecondaryRow ? "#10b981" : "#71717a"}
-                      size={22}
+                      size={18}
                     />
                   </TouchableOpacity>
                 </View>
@@ -226,7 +238,7 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
             <Icon name="barbell-outline" color="white" size={35} />
           </View>
           <View className="ml-2">
-            <Text className="text-white text-xl">{name}</Text>
+            <Text className="text-white text-xl w-full">{name}</Text>
             <Text className="text-zinc-400 text-base max-w-[92%]">
               {description}
             </Text>
