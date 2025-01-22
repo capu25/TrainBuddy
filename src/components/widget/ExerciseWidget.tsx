@@ -31,85 +31,191 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
 }) => {
   const navigation = useNavigation<NavigationProp>();
   const [sets, setSets] = useState<Set[]>([]);
+  const [secondarySets, setSecondarySets] = useState<Set[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSecondaryModalVisible, setIsSecondaryModalVisible] = useState(false);
   const [isModModalVisible, setIsModModalVisible] = useState(false);
   const [selectedSet, setSelectedSet] = useState<Set | null>(null);
+  const [isSecondaryRow, setIsSecondaryRow] = useState(false);
+  const [activeSetType, setActiveSetType] = useState<"primary" | "secondary">(
+    "primary"
+  );
 
-  // Chiave unica per ogni esercizio
-  const storageKey = `exercise_sets_${name.toLowerCase().replace(/\s+/g, "_")}`;
+  const primaryStorageKey = `exercise_sets_${name
+    .toLowerCase()
+    .replace(/\s+/g, "_")}`;
+  const secondaryStorageKey = `exercise_secondary_sets_${name
+    .toLowerCase()
+    .replace(/\s+/g, "_")}`;
 
-  // Carica le serie salvate all'avvio del componente
   useEffect(() => {
     loadSets();
   }, []);
 
-  // Carica le serie da AsyncStorage
   const loadSets = async () => {
     try {
-      const savedSets = await AsyncStorage.getItem(storageKey);
-      if (savedSets) {
-        setSets(JSON.parse(savedSets));
+      const [savedPrimarySets, savedSecondarySets] = await Promise.all([
+        AsyncStorage.getItem(primaryStorageKey),
+        AsyncStorage.getItem(secondaryStorageKey),
+      ]);
+
+      if (savedPrimarySets) setSets(JSON.parse(savedPrimarySets));
+      if (savedSecondarySets) {
+        const parsedSets = JSON.parse(savedSecondarySets);
+        setSecondarySets(parsedSets);
+        if (parsedSets.length > 0) setIsSecondaryRow(true);
       }
     } catch (error) {
       console.error("Errore nel caricamento delle serie:", error);
     }
   };
 
-  // Salva le serie in AsyncStorage
-  const saveSets = async (newSets: Set[]) => {
+  const saveSets = async (newSets: Set[], isSecondary: boolean = false) => {
     try {
-      await AsyncStorage.setItem(storageKey, JSON.stringify(newSets));
+      const key = isSecondary ? secondaryStorageKey : primaryStorageKey;
+      await AsyncStorage.setItem(key, JSON.stringify(newSets));
     } catch (error) {
       console.error("Errore nel salvataggio delle serie:", error);
     }
   };
 
-  // Gestisce il toggle del completamento
-  const toggleSetCompletion = async (id: string) => {
-    const updatedSets = sets.map((set) =>
+  const toggleSetCompletion = async (
+    id: string,
+    isSecondary: boolean = false
+  ) => {
+    const targetSets = isSecondary ? secondarySets : sets;
+    const setStateFn = isSecondary ? setSecondarySets : setSets;
+
+    const updatedSets = targetSets.map((set) =>
       set.id === id ? { ...set, completed: !set.completed } : set
     );
-    setSets(updatedSets);
-    await saveSets(updatedSets);
+
+    setStateFn(updatedSets);
+    await saveSets(updatedSets, isSecondary);
   };
 
-  // Aggiunge una nuova serie
   const addSet = async (weight: number, reps: number) => {
+    const isSecondary = activeSetType === "secondary";
+    const targetSets = isSecondary ? secondarySets : sets;
+    const setStateFn = isSecondary ? setSecondarySets : setSets;
+
     const newSet: Set = {
-      id: (sets.length + 1).toString(),
+      id: Date.now().toString(),
       reps,
       weight,
       completed: false,
     };
-    const updatedSets = [...sets, newSet];
-    setSets(updatedSets);
-    await saveSets(updatedSets);
+
+    const updatedSets = [...targetSets, newSet];
+    setStateFn(updatedSets);
+    await saveSets(updatedSets, isSecondary);
   };
 
-  // Modifica una serie esistente
   const handleSetModification = async (weight: number, reps: number) => {
-    if (selectedSet) {
-      const updatedSets = sets.map((set) =>
-        set.id === selectedSet.id ? { ...set, weight, reps } : set
-      );
-      setSets(updatedSets);
-      await saveSets(updatedSets);
-    }
+    if (!selectedSet) return;
+
+    const isSecondary = activeSetType === "secondary";
+    const targetSets = isSecondary ? secondarySets : sets;
+    const setStateFn = isSecondary ? setSecondarySets : setSets;
+
+    const updatedSets = targetSets.map((set) =>
+      set.id === selectedSet.id ? { ...set, weight, reps } : set
+    );
+
+    setStateFn(updatedSets);
+    await saveSets(updatedSets, isSecondary);
   };
 
-  const handleLongPress = (set: Set) => {
+  const handleLongPress = (set: Set, isSecondary: boolean = false) => {
     setSelectedSet(set);
+    setActiveSetType(isSecondary ? "secondary" : "primary");
     setIsModModalVisible(true);
   };
 
   const handleDeleteSet = async () => {
-    if (selectedSet) {
-      const updatedSets = sets.filter((set) => set.id !== selectedSet.id);
-      setSets(updatedSets);
-      await saveSets(updatedSets);
-      setIsModModalVisible(false);
-      setSelectedSet(null);
-    }
+    if (!selectedSet) return;
+
+    const isSecondary = activeSetType === "secondary";
+    const targetSets = isSecondary ? secondarySets : sets;
+    const setStateFn = isSecondary ? setSecondarySets : setSets;
+
+    const updatedSets = targetSets.filter((set) => set.id !== selectedSet.id);
+    setStateFn(updatedSets);
+    await saveSets(updatedSets, isSecondary);
+    setIsModModalVisible(false);
+    setSelectedSet(null);
+  };
+
+  const toggleSecondaryRow = () => {
+    setIsSecondaryRow(!isSecondaryRow);
+  };
+
+  const renderSetRow = (isSecondary: boolean = false) => {
+    const currentSets = isSecondary ? secondarySets : sets;
+
+    return (
+      <View className="mt-4">
+        <View className="flex-row justify-between items-center mb-2">
+          {isSecondary ? (
+            <Text className="text-zinc-400 text-base">
+              Ripetizioni SuperSerie
+            </Text>
+          ) : (
+            <Text className="text-zinc-400 text-base">Serie completate</Text>
+          )}
+          <View className="flex-row gap-0.5 items-center">
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setActiveSetType(isSecondary ? "secondary" : "primary");
+                  isSecondary
+                    ? setIsSecondaryModalVisible(true)
+                    : setIsModalVisible(true);
+                }}
+                className="flex-row items-center bg-zinc-800 px-3 py-1.5 rounded-lg"
+              >
+                <Icon name="add-outline" color="white" size={20} />
+                <Text className="text-white ml-1">Aggiungi serie</Text>
+              </TouchableOpacity>
+              {!isSecondary && (
+                <View className="flex-row items-center justify-center mt-2">
+                  <Text className="text-zinc-400 text-sm mx-1">SuperSerie</Text>
+                  <TouchableOpacity onPress={toggleSecondaryRow}>
+                    <Icon
+                      name="flash-outline"
+                      color={isSecondaryRow ? "#10b981" : "#71717a"}
+                      size={22}
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          </View>
+        </View>
+
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View className="flex-row gap-2 mt-4">
+            {currentSets.map((set) => (
+              <TouchableOpacity
+                key={set.id}
+                onLongPress={() => handleLongPress(set, isSecondary)}
+                onPress={() => toggleSetCompletion(set.id, isSecondary)}
+                className={`border ${
+                  set.completed
+                    ? "border-green-500 bg-green-500/10"
+                    : "border-zinc-700"
+                } rounded-lg p-2 min-w-[80px]`}
+              >
+                <Text className="text-white text-center">{set.weight}kg</Text>
+                <Text className="text-zinc-400 text-center">
+                  {set.reps} rep
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    );
   };
 
   return (
@@ -136,45 +242,20 @@ const ExerciseWidget: React.FC<ExerciseDetails> = ({
         </TouchableOpacity>
       </View>
 
-      {/* Sezione serie */}
       <View className="mt-4 border-t border-zinc-800 pt-3">
-        <View className="flex-row justify-between items-center mb-2">
-          <Text className="text-zinc-400">Serie completate</Text>
-          <TouchableOpacity
-            onPress={() => setIsModalVisible(true)}
-            className="flex-row items-center bg-zinc-800 px-3 py-1.5 rounded-lg"
-          >
-            <Icon name="add-outline" color="white" size={20} />
-            <Text className="text-white ml-1">Aggiungi serie</Text>
-          </TouchableOpacity>
-        </View>
-
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View className="flex-row gap-2 mt-4">
-            {sets.map((set) => (
-              <TouchableOpacity
-                key={set.id}
-                onLongPress={() => handleLongPress(set)}
-                onPress={() => toggleSetCompletion(set.id)}
-                className={`border ${
-                  set.completed
-                    ? "border-green-500 bg-green-500/10"
-                    : "border-zinc-700"
-                } rounded-lg p-2 min-w-[80px]`}
-              >
-                <Text className="text-white text-center">{set.weight}kg</Text>
-                <Text className="text-zinc-400 text-center">
-                  {set.reps} rep
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </ScrollView>
+        {renderSetRow()}
+        {isSecondaryRow && renderSetRow(true)}
       </View>
 
       <SetModal
         visible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
+        onSave={addSet}
+      />
+
+      <SetModal
+        visible={isSecondaryModalVisible}
+        onClose={() => setIsSecondaryModalVisible(false)}
         onSave={addSet}
       />
 
