@@ -6,6 +6,12 @@ export const dummyStats = [
     color: "#22c55e",
   },
   {
+    iconName: "barbell-outline",
+    title: "Total lift",
+    value: "2,450 kg",
+    color: "#22c55e",
+  },
+  {
     iconName: "flame-outline",
     title: "Calorie Perse",
     value: "1,280 kcal",
