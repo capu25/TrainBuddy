@@ -5,8 +5,6 @@ export const dummyStats = [
     value: "2,450 kg",
     color: "#22c55e",
   },
-  //DUMMY COMMENT
-  //HEHE
   {
     iconName: "flame-outline",
     title: "Calorie Perse",
