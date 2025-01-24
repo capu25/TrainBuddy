@@ -11,6 +11,9 @@ import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Ionicons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../../types/navigation";
 
 const Settings = () => {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -22,7 +25,10 @@ const Settings = () => {
     );
   };
 
-  const handleDeleteData = async () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const handleDeleteData = async ({}) => {
     Alert.alert(
       "Attenzione!",
       "Stai per cancellare, in maniera permanente, tutti i dati e i progressi registrati in TrainBuddy, sei sicuro di voler effettuare questa operazione?",
@@ -33,8 +39,17 @@ const Settings = () => {
           style: "destructive",
           onPress: async () => {
             try {
-              //await AsyncStorage.clear();
-              //navigation.navigate('ROOT');
+              // Get all keys first
+              const keys = await AsyncStorage.getAllKeys();
+              console.log("Existing keys:", keys);
+
+              // Clear and verify
+              await AsyncStorage.clear();
+
+              // Check if keys are actually removed
+              const remainingKeys = await AsyncStorage.getAllKeys();
+              console.log("Remaining keys after clear:", remainingKeys);
+              navigation.navigate("Onboarding");
               console.log("ELIMINATO TUTTO! BOOM");
             } catch (e) {
               console.error(e);
