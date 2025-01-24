@@ -58,7 +58,11 @@ const MainStack = () => {
           screenOptions={{ headerShown: false }}
         >
           {/* --- FIRST ACCESS --- */}
-          <Stack.Screen name="Onboarding" component={OnBoarding} />
+          <Stack.Screen
+            name="Onboarding"
+            component={OnBoarding}
+            options={{ gestureEnabled: false }}
+          />
           {/* --- MAIN TAB NAV --- */}
           <Stack.Screen
             name="MainNav"
