@@ -1,9 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
 // --- IMPORT DUMMYES ---
 import { dummyStats } from "../../mock/dummyStats";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// --- FUNCTION STATS CARD ---
+const getData = async (key: any) => {
+  try {
+    const current = await AsyncStorage.getItem("@fitness_tracker_weight");
+    const currentWeight: number = current ? parseFloat(current) : 0;
+    if (currentWeight) {
+      const value = currentWeight - 10;
+      return value;
+    }
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 const StatsCard = ({
   iconName,
@@ -26,14 +41,24 @@ const StatsCard = ({
 );
 
 const StatsWidget = () => {
+  const rows = dummyStats.reduce((acc: any[][], curr, i) => {
+    if (i % 2 === 0) acc.push([curr]);
+    else acc[acc.length - 1].push(curr);
+    return acc;
+  }, []);
+
   return (
     <View className="p-2">
       <Text className="text-zinc-400 text-xl font-medium mb-4">
         Global Stats
       </Text>
-      <View className="flex-row gap-3">
-        {dummyStats.map((stat, index) => (
-          <StatsCard key={index} {...stat} />
+      <View className="gap-3">
+        {rows.map((row, rowIndex) => (
+          <View key={rowIndex} className="flex-row gap-3">
+            {row.map((stat, colIndex) => (
+              <StatsCard key={`${rowIndex}-${colIndex}`} {...stat} />
+            ))}
+          </View>
         ))}
       </View>
     </View>
