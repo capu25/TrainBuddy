@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Animated } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
 import { RootStackParamList } from "../../../types/navigation";
 
 // --- IMPORT KEEPAWAKE ---
 import { useKeepAwake } from "expo-keep-awake";
+
+// --- IMPORT AUDIO STUFF ---
+import { Audio } from "expo-av";
 
 // --- TYPE DEF ---
 type TimerScreenRouteProp = RouteProp<RootStackParamList, "Timer">;
@@ -24,6 +27,40 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
   // --- KEEP THE SCREEN ON DURING TIMER ---
   useKeepAwake();
 
+  const [sound, setSound] = useState<Audio.Sound | null>(null);
+
+  useEffect(() => {
+    const loadSound = async () => {
+      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+      try {
+        const { sound } = await Audio.Sound.createAsync(
+          require("../../../../assets/audio/timeUp.mp3")
+        );
+        setSound(sound);
+      } catch (e) {
+        console.error("Errore nel caricamento del suono:", e);
+      }
+    };
+
+    loadSound();
+
+    return () => {
+      if (sound) {
+        sound.unloadAsync();
+      }
+    };
+  }, []);
+
+  const playSound = async () => {
+    try {
+      if (sound) {
+        await sound.replayAsync();
+      }
+    } catch (e) {
+      console.error("Errore nella riproduzione del suono:", e);
+    }
+  };
+
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -32,6 +69,7 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else if (timeLeft === 0) {
+      playSound();
       clearInterval(interval!);
     }
 
