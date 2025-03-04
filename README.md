@@ -11,12 +11,12 @@ You have two options:
 ## Expo-Go procedure
 
 - Download on your device [Expo-Go](https://expo.dev/go) app.
-- Click [here](https://tinyurl.com/TBalphaR) to open TrainBuddy on your browser.
+- Click [here](https://tinyurl.com/tbRoll2) to open TrainBuddy on your browser.
 - Then click on "open" to have the app automatically on your phone!
 
 Once this procedure is completed, you only need to launch Expo-Go to load the app, and then click on "TrainBuddy".
 
-Don't forget to check this page for the newest update! [LAST UPDATE 29/01]
+Don't forget to check this page for the newest update! [LAST UPDATE 04/03]
 
 ## Screenshots
 
