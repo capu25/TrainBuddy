@@ -8,7 +8,7 @@ import { RootStackParamList } from "../../../types/navigation";
 import { useKeepAwake } from "expo-keep-awake";
 
 // --- IMPORT AUDIO STUFF ---
-import { Audio } from "expo-av";
+import { AudioPlayer } from "expo-audio";
 
 // --- TYPE DEF ---
 type TimerScreenRouteProp = RouteProp<RootStackParamList, "Timer">;
@@ -27,16 +27,22 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
   // --- KEEP THE SCREEN ON DURING TIMER ---
   useKeepAwake();
 
-  const [sound, setSound] = useState<Audio.Sound | null>(null);
+  const [sound, setSound] = useState<AudioPlayer | null>(null);
 
   useEffect(() => {
     const loadSound = async () => {
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
       try {
-        const { sound } = await Audio.Sound.createAsync(
+        // Crea il player audio
+        const player = new AudioPlayer(
           require("../../../../assets/audio/timeUp.mp3")
         );
-        setSound(sound);
+
+        // Configura per riprodurre anche in modalità silenziosa su iOS
+        await player.setAudioModeAsync({
+          playsInSilentModeIOS: true,
+        });
+
+        setSound(player);
       } catch (e) {
         console.error("Errore nel caricamento del suono:", e);
       }
@@ -44,9 +50,10 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ route }) => {
 
     loadSound();
 
+    // Cleanup quando il componente viene smontato
     return () => {
       if (sound) {
-        sound.unloadAsync();
+        sound.remove();
       }
     };
   }, []);

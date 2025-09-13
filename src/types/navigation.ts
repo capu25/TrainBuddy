@@ -1,6 +1,7 @@
 import { Workout } from "./workout";
 
 export type RootStackParamList = {
+  Maintenance: undefined;
   Onboarding: undefined;
   MainNav: undefined;
   Home: undefined;

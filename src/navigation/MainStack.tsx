@@ -9,6 +9,7 @@ import MainTabNav from "../components/MainTabNav";
 // --- IMPORT SCREEN(S) ---
 import ExplodedExercise from "./screens/nonVisible/ExplodedExercise";
 import Timer from "./screens/nonVisible/Timer";
+import MaintenanceMode from "./screens/maintenanceMode/MaintenanceMode";
 
 // --- IMPORT NAVIGATION UTILITIES ---
 import { NavigationContainer } from "@react-navigation/native";
@@ -54,9 +55,16 @@ const MainStack = () => {
     <NavigationContainer>
       <ExerciseProvider>
         <Stack.Navigator
-          initialRouteName={isFirstAccess ? "Onboarding" : "MainNav"}
+          initialRouteName="Maintenance"
+          //initialRouteName={isFirstAccess ? "Onboarding" : "MainNav"}
           screenOptions={{ headerShown: false }}
         >
+          {/* --- MAINTENANCE MODE --- */}
+          <Stack.Screen
+            name="Maintenance"
+            component={MaintenanceMode}
+            options={{ gestureEnabled: false }}
+          />
           {/* --- FIRST ACCESS --- */}
           <Stack.Screen
             name="Onboarding"
